@@ -113,7 +113,7 @@ fun Task(navController: NavController, selectedTask:String) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp),
+                .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -123,7 +123,8 @@ fun Task(navController: NavController, selectedTask:String) {
 
                     LazyColumn(modifier= Modifier
                         .fillMaxSize()
-                        , verticalArrangement = Arrangement.spacedBy(15.dp)){
+                        , verticalArrangement = Arrangement.spacedBy(15.dp), contentPadding = PaddingValues(bottom=10.dp)
+                    ){
                         tasks.forEach { task->
                             val delete = SwipeAction(
                                 onSwipe = {

@@ -9,5 +9,5 @@ data class Mission(
     var priority: String = "",
     var userId:String ="",
     var taskId:String ="",
-    var status:String = "Pending"
+    var status:String = "pending"
 )

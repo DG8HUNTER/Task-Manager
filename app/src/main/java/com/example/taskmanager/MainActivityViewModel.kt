@@ -25,6 +25,9 @@ class MainActivityViewModel {
 
     val phoneNumber :State<String?> = _phoneNumber
 
+    private  val _password:MutableState<String?> = mutableStateOf(null)
+    val password:State<String?> =_password
+
     private val _firstNameError :MutableState<Boolean> = mutableStateOf(false)
     val firstNameError :State<Boolean> = _firstNameError
 
@@ -124,6 +127,19 @@ class MainActivityViewModel {
     @RequiresApi(Build.VERSION_CODES.O)
     val yearOf :State<Int> = _yearOf
 
+    private val _selectedOption :MutableState<String> = mutableStateOf("Task")
+     val selectedOption :State<String> = _selectedOption
+
+    private val _addStatus : MutableState<Boolean> = mutableStateOf(true)
+
+  val addStatus : MutableState<Boolean> =_addStatus
+
+     private val _taskId :MutableState<String?> = mutableStateOf(null)
+    val taskId :State<String?> =_taskId
+
+
+
+
 
 
 
@@ -134,6 +150,7 @@ class MainActivityViewModel {
             "firstName"-> if(newValue!=null)_firstName.value=newValue.toString() else _firstName.value=null
             "lastName"-> if(newValue!=null)_lastName.value=newValue.toString() else _lastName.value=null
             "phoneNumber"-> if(newValue!=null)_phoneNumber.value=newValue.toString() else _phoneNumber.value=null
+            "password"->if(newValue!=null) _password.value=newValue.toString() else _password.value=null
             "firstNameError"-> if(newValue!=null)_firstNameError.value= newValue as Boolean
             "lastNameError" -> if(newValue!=null)_lastNameError.value=newValue as Boolean
             "phoneNumberError"-> if(newValue!=null)_phoneNumberError.value=newValue as Boolean
@@ -160,6 +177,9 @@ class MainActivityViewModel {
             "searchYear"-> if(newValue!=null) _searchYear.value = newValue as String else _searchYear.value=null
             "searchTasks" -> if(newValue!=null) _searchTasks.value = newValue as MutableList<Mission>
             "todayTasks" -> if(newValue!=null) _todayTasks.value = newValue as MutableList<Mission>
+            "selectedOption"->if(newValue!=null) _selectedOption.value=newValue as String
+            "addStatus"-> if(newValue!=null) _addStatus.value =newValue as Boolean
+            "taskId" -> if (newValue!=null) _taskId.value =newValue as String
 
 
 

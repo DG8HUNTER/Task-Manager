@@ -67,7 +67,8 @@ fun TaskToDo(navController: NavController, mission: Mission , delete:SwipeAction
         backgroundUntilSwipeThreshold = Color.White
     ) {
         Box(
-            modifier = Modifier
+            modifier = Modifier.clickable {
+                navController.navigate(route="TaskInfoScreen/${mission.taskId}")}
                 .fillMaxWidth()
                 .background(color = Color.White)
                 .padding(16.dp)

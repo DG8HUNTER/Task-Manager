@@ -29,7 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.taskmanager.Classes.SRow
 import com.example.taskmanager.Classes.User
+import com.example.taskmanager.Components.SettingRow
 import com.example.taskmanager.R
 import com.example.taskmanager.ui.theme.darkGray
 import com.google.firebase.auth.ktx.auth
@@ -49,9 +51,14 @@ fun Settings(navController: NavController){
         mutableStateOf(User())
     }
 
+    val userId = Firebase.auth.currentUser?.uid.toString()
+
 
     val db =Firebase.firestore
     val currentUser=Firebase.auth.currentUser?.uid.toString()
+
+    val rows: List<SRow> =
+        listOf(SRow.UpdateUserInfo, SRow.ChangePassword, SRow.SwitchAccount, SRow.SignOut)
 
     LaunchedEffect(key1 =true) {
         scope.launch(Dispatchers.Default){
@@ -161,6 +168,12 @@ fun Settings(navController: NavController){
                     .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
                     .clip(shape = RoundedCornerShape(5.dp))
             )
+
+            Spacer(modifier = Modifier.height(2.dp))
+            rows.forEach { row ->
+                SettingRow(navController = navController, userUi = userId, sRow = row)
+            }
+
 
         }
 

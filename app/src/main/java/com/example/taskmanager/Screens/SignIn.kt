@@ -394,7 +394,7 @@ fun SignIn(navController: NavController){
                         fontWeight = FontWeight.Medium,
                         color = customColor,
                         modifier = Modifier.clickable {
-                            navController.navigate(route="ResetPassword")
+                            navController.navigate(route="ResetPassword?oldPassword=/SignInScreen")
                         }
 
 //                            .clickable(interactionSource=interactionSource, indication = null){
@@ -438,7 +438,9 @@ fun SignIn(navController: NavController){
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d("TAG", "signInWithEmail:success")
                                         val userUi = auth.currentUser?.uid.toString()
-                                      navController.navigate(route="MainScreen")
+                                      navController.navigate(route="MainScreen"){
+                                          popUpTo(0)
+                                      }
                                         //   mainActivityViewModel.setValue("Home","_selectedButton")
                                         //    mainActivityViewModel.setValue("General","_tabSelected")
                                         //    mainActivityViewModel.setValue(0,"_state")

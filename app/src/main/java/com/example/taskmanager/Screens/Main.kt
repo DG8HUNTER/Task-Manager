@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -76,8 +77,11 @@ import java.text.SimpleDateFormat
 
 fun Main(navController: NavController){
 val db =Firebase.firestore
+    Log.d("option", mainActivityViewModel.selectedOption.value.toString())
     val tasksRef = db.collection("Tasks").orderBy("dateTime")
     val scope = rememberCoroutineScope()
+
+
     tasksRef.addSnapshotListener { snapshot, e ->
         if (e != null) {
             Log.w(ContentValues.TAG, "Listen failed.", e)
@@ -122,9 +126,6 @@ val db =Firebase.firestore
 
     val currentUser = Firebase.auth.currentUser?.uid.toString()
 
-    var selectedOption by remember {
-        mutableStateOf("Task")
-    }
 
     var firstName by remember {
         mutableStateOf("")
@@ -160,9 +161,9 @@ val db =Firebase.firestore
         .fillMaxSize()
         .background(color = Color.Red),
         floatingActionButton = {
-               if(selectedTask=="To Do" && selectedOption=="Task"){
+               if(selectedTask=="To Do" && mainActivityViewModel.selectedOption.value=="Task"){
                    if(mainActivityViewModel.todayTasks.value.size==0){
-                       FloatingActionButton(onClick = { selectedOption="AddTask" }, containerColor = customColor ) {
+                       FloatingActionButton(onClick = { mainActivityViewModel.setValue("AddTask" , "selectedOption") }, containerColor = customColor ) {
                            Icon(imageVector = Icons.Default.Add, contentDescription = "add", tint=Color.White)
                        }
 
@@ -175,7 +176,7 @@ val db =Firebase.firestore
 
         topBar = {
 
-            when(selectedOption){
+            when(mainActivityViewModel.selectedOption.value){
                 in "Task" , "SearchTask"->  Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -184,14 +185,14 @@ val db =Firebase.firestore
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = if(selectedOption=="Task") "Home" else  "Search Task" ,
+                        text = if(mainActivityViewModel.selectedOption.value=="Task") "Home" else  "Search Task" ,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.Black,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start
                     )
-                    if(selectedOption=="Task"){
+                    if(mainActivityViewModel.selectedOption.value=="Task"){
                         Text(buildAnnotatedString {
                             withStyle(style = SpanStyle(color=Color.Gray,fontWeight= FontWeight.Medium, fontSize = 16.sp)){
                                 append("Welcome ")
@@ -319,8 +320,9 @@ val db =Firebase.firestore
                 "AddTask"-> Row(modifier= Modifier
                     .fillMaxWidth()
                     .padding(20.dp)){
-                    Text(text="Add Task" , fontSize = 25.sp , fontWeight = FontWeight.Bold)
-                }
+                  Text(text= if(mainActivityViewModel.addStatus.value)"Add Task" else "Update Task", fontSize=25.sp , fontWeight = FontWeight.Bold)
+                    }
+
 
 
                 else -> Row(modifier= Modifier
@@ -342,24 +344,25 @@ val db =Firebase.firestore
 
                 Row(modifier=Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
                     IconButton(onClick = {
-                        selectedOption="Task"
+                       mainActivityViewModel.setValue("Task","selectedOption")
 
                     }, modifier = Modifier.size(40.dp)) {
-                        Icon(painter = painterResource(id = R.drawable.task), contentDescription ="",modifier=Modifier.size(25.dp), tint = if(selectedOption=="Task") customColor else Color.Black)
+                        Icon(painter = painterResource(id = R.drawable.task), contentDescription ="",modifier=Modifier.size(25.dp), tint = if(mainActivityViewModel.selectedOption.value=="Task") customColor else Color.Black)
 
                     }
-                    IconButton(onClick = {  selectedOption="AddTask" }, modifier = Modifier.size(40.dp)) {
-                        Icon(painter = painterResource(id = R.drawable.addtaskpng), contentDescription ="",modifier=Modifier.size(25.dp),tint = if(selectedOption=="AddTask") customColor else Color.Black)
+                    IconButton(onClick = {  mainActivityViewModel.setValue("AddTask","selectedOption") }, modifier = Modifier.size(40.dp)) {
+                        Icon(painter = painterResource(id = R.drawable.addtaskpng), contentDescription ="",modifier=Modifier.size(25.dp),tint = if(mainActivityViewModel.selectedOption.value=="AddTask") customColor else Color.Black)
 
                     }
-                    IconButton(onClick = { selectedOption="SearchTask" },modifier = Modifier.size(40.dp)) {
-                        Icon(painter = painterResource(id = R.drawable.search), contentDescription ="",modifier=Modifier.size(25.dp),tint = if(selectedOption=="SearchTask") customColor else Color.Black)
+                    IconButton(onClick = { mainActivityViewModel.setValue("SearchTask","selectedOption") },modifier = Modifier.size(40.dp)) {
+                        Icon(painter = painterResource(id = R.drawable.search), contentDescription ="",modifier=Modifier.size(25.dp),tint = if(mainActivityViewModel.selectedOption.value=="SearchTask") customColor else Color.Black)
 
                     }
-                    IconButton(onClick = {  selectedOption="Settings"},modifier = Modifier.size(40.dp)) {
-                        Icon(painter = painterResource(id = R.drawable.settings), contentDescription ="",modifier=Modifier.size(25.dp),tint = if(selectedOption=="Settings") customColor else Color.Black )
+                    IconButton(onClick = {  mainActivityViewModel.setValue("Settings","selectedOption")},modifier = Modifier.size(40.dp)) {
+                        Icon(painter = painterResource(id = R.drawable.settings), contentDescription ="",modifier=Modifier.size(25.dp),tint = if(mainActivityViewModel.selectedOption.value=="Settings") customColor else Color.Black )
 
                     }
+
                 }
 
 
@@ -374,7 +377,7 @@ val db =Firebase.firestore
             .padding(it)
             .fillMaxSize()
             ){
-            when(selectedOption){
+            when(mainActivityViewModel.selectedOption.value){
                 "Task" -> Task(navController = navController,selectedTask=selectedTask)
                 "AddTask" -> AddTask(navController =navController)
                 "SearchTask"-> SearchTask(navController=navController , selectedTask=selectedTask)

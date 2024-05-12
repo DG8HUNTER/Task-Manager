@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -170,22 +171,41 @@ fun AddTask(navController: NavController) {
                         description = mainActivityViewModel.description.value!!,
                         dateTime = SimpleDateFormat("dd-MM-yyyy hh:mm a").parse("${day}-${month}-${mainActivityViewModel.year.value!!}  ${hour}:$minutes ${mainActivityViewModel.dayPeriod.value}"), // Convert LocalDateTime to Firestore Timestamp
                         priority = mainActivityViewModel.priority.value,
-                        userId =userId
+                        userId =userId,
+
 
                     )
 
                     scope.launch(Dispatchers.Default) {
-                        db.collection("Tasks").add(Task).addOnSuccessListener { document ->
-                            if (document != null) {
-                                val taskId = document.id
-                                db.collection("Tasks").document(taskId)
-                                    .update(
+                        if(mainActivityViewModel.addStatus.value){
+                            db.collection("Tasks").add(Task).addOnSuccessListener { document ->
+                                if (document != null) {
+                                    val taskId = document.id
+                                    db.collection("Tasks").document(taskId)
+                                        .update(
                                             "taskId", taskId
 
 
-                                    )
+                                        )
+                                }
                             }
+                        }else {
+                            val missionMap = mapOf(
+                                "title" to Task.title,
+                                "description" to Task.description,
+                                "dateTime" to Task.dateTime,
+                                "priority" to Task.priority,
+                                "status" to Task.status,
+
+                            )
+
+                            db.collection("Tasks").document(mainActivityViewModel.taskId.value.toString()).update(missionMap).addOnSuccessListener { document ->
+
+                                }
+
+
                         }
+
 
                             withContext(Dispatchers.Main){
                                 mainActivityViewModel.setValue(null,"title")
@@ -197,7 +217,14 @@ fun AddTask(navController: NavController) {
                                 mainActivityViewModel.setValue(null,"minutes")
                                 mainActivityViewModel.setValue("AM","dayPeriod")
                                 mainActivityViewModel.setValue(Priority.Low.toString(),"priority")
-                                Toast.makeText(context , "Task added successfully!",Toast.LENGTH_SHORT).show()
+                                if(mainActivityViewModel.addStatus.value){
+                                    Toast.makeText(context , "Task added successfully!",Toast.LENGTH_SHORT).show()
+                                }else {
+                                    Toast.makeText(context , "Task updated successfully!",Toast.LENGTH_SHORT).show()
+                                    mainActivityViewModel.setValue(true , "addStatus")
+                                    navController.popBackStack()
+                                }
+
                                 focusManager.clearFocus()
                             }
                         }
@@ -218,7 +245,14 @@ fun AddTask(navController: NavController) {
 
 
 
-            },
+            }
+
+
+
+
+
+
+                ,
 
                 shape = RectangleShape , modifier = Modifier
                     .width(120.dp)
@@ -226,7 +260,7 @@ fun AddTask(navController: NavController) {
                     .background(color = customColor, shape = RoundedCornerShape(10.dp)), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent
                 )){
 
-                Text(text ="Add" , fontSize = 18.sp , fontWeight = FontWeight.Bold , color=Color.White)
+                Text(text = if(mainActivityViewModel.addStatus.value)"Add" else "Update", fontSize = 18.sp , fontWeight = FontWeight.Bold , color=Color.White)
 
             }
 

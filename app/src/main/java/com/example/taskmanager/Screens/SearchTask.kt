@@ -4,6 +4,7 @@ import TaskToDo
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,11 +38,11 @@ val db = Firebase.firestore
 
     Column(modifier= Modifier
         .fillMaxSize()
-        .padding(20.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+        .padding(start = 20.dp , end=20.dp ), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
 
         if(mainActivityViewModel.searchTasks.value.size!=0){
 
-            LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(15.dp)){
+            LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(15.dp), contentPadding = PaddingValues(bottom=10.dp)){
                 mainActivityViewModel.searchTasks.value.forEach { task ->
 
                     val delete = SwipeAction(
