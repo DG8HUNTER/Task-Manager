@@ -80,6 +80,7 @@ val db =Firebase.firestore
     Log.d("option", mainActivityViewModel.selectedOption.value.toString())
     val tasksRef = db.collection("Tasks").orderBy("dateTime")
     val scope = rememberCoroutineScope()
+    val currentUser = Firebase.auth.currentUser?.uid.toString()
 
 
     tasksRef.addSnapshotListener { snapshot, e ->
@@ -93,7 +94,7 @@ val db =Firebase.firestore
                 val list: MutableList<Mission> = mutableListOf()
                 if (snapshot.documents.isNotEmpty()) {
                     for (doc in snapshot.documents) {
-                        if (doc != null) {
+                        if (doc != null && doc.data?.get("userId")==currentUser) {
                             val createdAtTimestamp = doc.data?.get("dateTime") as Timestamp
                             val createdAtDate = createdAtTimestamp.toDate()
                             val sdf = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a")
@@ -124,7 +125,7 @@ val db =Firebase.firestore
 
     }
 
-    val currentUser = Firebase.auth.currentUser?.uid.toString()
+
 
 
     var firstName by remember {
